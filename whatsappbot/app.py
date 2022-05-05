@@ -7,6 +7,5 @@ def create_app():
     init_conf(app)
     
     load_modules(app)
-    app.register_blueprint
     return app
 
