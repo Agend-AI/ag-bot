@@ -16,7 +16,7 @@ def bot():
     numero = request.values.get('From').strip()
     resp = MessagingResponse()
     msg = resp.message()
-    marcia_disse = marcia.say(numero+" "+incoming_msg)
+    marcia_disse = marcia.say(incoming_msg)
     msg.body(marcia_disse)
     return str(resp)
 
