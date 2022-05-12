@@ -1,8 +1,7 @@
 {% block %}
-  {% client %}.*(Oi|oi|ola).*{% endclient %}
-  {% response %}Olá, bem vindo a Casa do Celso. Gostaria de agendar sua visita?
-  1 - Sim
-  2 - Não
+  {% client %}(whatsapp:\+\d{12,13})\s.*(Oi|oi|ola).*{% endclient %}
+  {% response %}
+    {% call verificar_numero: %1 %}
   {% endresponse %}
 {% endblock %}
 
