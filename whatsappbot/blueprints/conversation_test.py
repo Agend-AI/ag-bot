@@ -1,32 +1,32 @@
+import requests
 from chatbot import Chat, register_call
-from whatsappbot.db import cadastros_novos as cadastros
-
-dias_disponiveis = {
-    "segunda": {"horarios": ["13:00", "14:00"], "data": "16/05/2022"},
-    "quarta": {"horarios": ["14:00", "15:00"], "data": "18/05/2022"}
+from whatsappbot.db import registrar_usuario, usuario_existe, nome_usuario, listar_visitas_formatas
+import datetime
+dias_semana = {
+    0: "segunda-feira",
+    1: "terça-feira",
+    2: "quarta-feira",
+    3: "quinta-feira",
+    4: "sexta-feira",
+    5: "sábado",
+    6: "domingo"
 }
-
 def dias_disponiveis_texto():
-    dias = ""
-    for i, dia in enumerate(dias_disponiveis.keys()):
-        dias += str(i + 1) + " - " + dia.title() + " - " + dias_disponiveis[dia]["data"] + "\n"
-    return dias
-
-def horarios_do_dia_escolhido_texto(dia):
-    horarios = ""
-    for ii, horario in enumerate(dias_disponiveis[dia]["horarios"]):
-        horarios += str(ii + 1) + " - " + horario + "\n"
-    return horarios
+    dias = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira"]
+    dias_formatado = ""
+    for dia in dias:
+        dias_formatado += dia.title() + "\n"
+    return dias_formatado
 
 
 @register_call("verificar_numero")
 def verificar_numero(session, query: str):
     query = query.strip()
-    if query not in cadastros:
+    if not usuario_existe(query):
         return "Olá, seja bem-vindo a Casa do Celso! Vi que você não possui cadastro conosco, gostaria de se cadastrar?\n" \
                "1 - Sim\n" \
                "2 - Não"
-    return f"Olá, {cadastros[query]['nome']}, seja bem-vindo a Casa do Celso! O que você gostaria de fazer?\n" \
+    return f"Olá, {nome_usuario(query)}, seja bem-vindo a Casa do Celso! O que você gostaria de fazer?\n" \
            "1 - Agendar visita\n" \
            "2 - Listar minhas visitas marcadas\n" \
            "3 - Conversar com o filho do Celso"
@@ -34,11 +34,7 @@ def verificar_numero(session, query: str):
 @register_call("cadastrar_numero")
 def cadastrar_numero(session, query):
     nome, numero = query.split()
-    cadastros[numero] = {
-        "nome": nome,
-        "visitas_marcadas": None,
-        "forma_pagamento": None
-    }
+    registrar_usuario(numero, nome)
     return "Sejá bem-vindo :) O que você gostaria de fazer?\n" \
            "1 - Agendar visita\n" \
            "2 - Listar minhas visitas marcadas\n" \
@@ -49,55 +45,47 @@ def cadastrar_numero(session, query):
 def escolhas(session, query):
     escolha, numero = query.split()
     if escolha in "2 - listar minhas visitas marcadas":
-        return listar_visitas(numero)
+        return listar_visitas_formatas(numero)
     if escolha in "1 - agendar visita":
         return "Temos disponibilidades nos dias:\n" + dias_disponiveis_texto()
-    return "Seu contato está sendo redirecionado para o filho do Celso! Obrigado pelo que conversamos, te amo, bebê <3"
+    return "Não entendi, pode repetir?"
 
 @register_call("escolha_dia")
 def escolha_dia(session, query):
     escolha, numero = query.split()
-
-    dias = dias_disponiveis_texto().split("\n")
-    for i, dia in enumerate(dias):
+    dias = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira"]
+    for dia in dias:
         if escolha.lower().strip() in dia.lower():
-            dia_escolhido = list(dias_disponiveis.keys())[i]
-            session.memory["dia"] = dia_escolhido
-            return "Possuímos os horários:\n" + horarios_do_dia_escolhido_texto(dia_escolhido)
-    return "Desculpe mas não entendi, pode escolher um horário respondendo o número ou escrevendo o horário que listei " \
-           "na mensagem anterior!"
+            session.memory["dia"] = escolha
+            return "Quantas pessoas irão?"
+    return "Desculpe mas não entendi, pode repetir?"
 
-@register_call("escolha_horario")
-def escolha_dia(session, query):
+@register_call("quantidade_pessoas")
+def quantidade_pessoas(session, query):
     escolha, numero = query.split()
-    horarios = horarios_do_dia_escolhido_texto(session.memory["dia"]).split("\n")
-    hora_escolhida = -1
-    for i, hora in enumerate(horarios):
-        if escolha.lower().strip() in hora.lower():
-            hora_escolhida = i
-    nova_visita = f"{session.memory['dia'].title()} - "\
-                  f"{dias_disponiveis[session.memory['dia']]['data']} - "\
-                  f"às {dias_disponiveis[session.memory['dia']]['horarios'][hora_escolhida]}"
-    if cadastros[numero.strip()]["visitas_marcadas"] is None:
-        cadastros[numero.strip()]["visitas_marcadas"] = [nova_visita]
-    else:
-        cadastros[numero.strip()]["visitas_marcadas"].append(nova_visita)
-    return "Muito bem, sua visita foi agendada com SUCESSO!!!!!!! AEHOOOOOOO PORRRRRRRAA"
+    escolha = escolha.replace("_", " ")
+    dia = session.memory["dia"]
+    d_inicial = datetime.datetime(year=datetime.datetime.now().year,
+                          month=datetime.datetime.now().month,
+                          day=18,
+                          hour=9, minute=0, second=0, microsecond=000)
+    d_inicial = datetime.datetime.isoformat(d_inicial)
+    d_inicial += "-03:00"
 
-def listar_visitas(usuario):
-        visitas = "Suas visitas são:\n"
-        if not cadastros[usuario]["visitas_marcadas"]:
-            return cadastros[usuario]["nome"]+", você não possui visitar agendadas! :O, gostaria de agendar?\n" \
-                                            "1 - Sim\n" \
-                                            "2 - Não"
-        for visita in cadastros[usuario]["visitas_marcadas"]:
-            visitas += visita+"\n"
-        return visitas
-
-@register_call("pergunta_deseja_cadastrar")
-def teste(session, query):
-    print(query)
-    return query
+    d_final = datetime.datetime(year=datetime.datetime.now().year,
+                                  month=datetime.datetime.now().month,
+                                  day=18,
+                                  hour=12, minute=0, second=0, microsecond=000)
+    d_final = datetime.datetime.isoformat(d_final)
+    d_final += "-03:00"
+    response = {
+        "summary": f"{nome_usuario(numero)} - {dia}",
+        "description": numero+"\n"+escolha,
+        "dateTimeStart": d_inicial,
+        "dateTimeEnd": d_final
+    }
+    requests.post("https://agenda-ai-api.herokuapp.com/event", json=response)
+    return "Visita agendada com sucesso!"
 
 @register_call("pergunta_sim_nao")
 def pergunta_sim_nao(session, query):
@@ -112,6 +100,7 @@ marcia = Chat(default_template="../templates/conversation.j2", language='pt-br')
 while True:
     incoming_msg = input("mensagem enviada: ")
     numero = "+559184762085"
+    incoming_msg = incoming_msg.replace(" ", "_")
     marcia_disse = marcia.say(numero + " " + incoming_msg)
     print(marcia_disse)
 
