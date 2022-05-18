@@ -45,6 +45,8 @@ def cadastrar_numero(session, query):
 @register_call("escolhas")
 def escolhas(session, query):
     escolha, numero = query.split()
+    escolha = escolha.replace("_", " ").strip().lower()
+    print("Escolha opção: ", escolha)
     if escolha in "2 - listar minhas visitas marcadas":
         return listar_visitas_formatas(numero)
     if escolha in "1 - agendar visita":
@@ -54,6 +56,8 @@ def escolhas(session, query):
 @register_call("escolha_dia")
 def escolha_dia(session, query):
     escolha, numero = query.split()
+    escolha = escolha.replace("_", " ").strip().lower()
+    print("Escolha dia: ", escolha)
     dias = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira"]
     for dia in dias:
         if escolha.lower().strip() in dia.lower():
@@ -64,7 +68,7 @@ def escolha_dia(session, query):
 @register_call("quantidade_pessoas")
 def quantidade_pessoas(session, query):
     escolha, numero = query.split()
-    escolha = escolha.replace("_", " ")
+    escolha = escolha.replace("_", " ").strip().lower()
     dia = session.memory["dia"]
     d_inicial = datetime.datetime(year=datetime.datetime.now().year,
                           month=datetime.datetime.now().month,
