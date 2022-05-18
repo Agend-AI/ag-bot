@@ -41,8 +41,5 @@ trainer.train([
     "Obrigado"
 ])
 """
-while False:
-    pergunta = input("você: ")
-    response = chatbot.get_response(pergunta)
-    print("Bot: ", response)
+
 
