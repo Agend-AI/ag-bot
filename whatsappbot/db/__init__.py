@@ -4,10 +4,10 @@ import requests
 
 GET_NUMBER = re.compile(r'(\+\d{12,13})')
 API_GET_EVENTS = "https://agenda-ai-api.herokuapp.com/event"
-
+path_arquivo = "cadastros.json"
 
 def registrar_usuario(numero, nome):
-    usuarios_file = open("../../cadastros.json")
+    usuarios_file = open(path_arquivo)
     usuarios = usuarios_file.read()
     usuarios_file.close()
     usuarios = json.loads(usuarios)
@@ -16,12 +16,12 @@ def registrar_usuario(numero, nome):
         "numero": numero,
         "agenda": None
     })
-    usuarios_file = open("../../cadastros.json", "w")
+    usuarios_file = open(path_arquivo, "w")
     usuarios_file.write(json.dumps(usuarios))
     usuarios_file.close()
 
 def usuario_existe(numero):
-    usuarios_file = open("../../cadastros.json")
+    usuarios_file = open(path_arquivo)
     usuarios = usuarios_file.read()
     usuarios_file.close()
     usuarios = json.loads(usuarios)
@@ -31,7 +31,7 @@ def usuario_existe(numero):
     return False
 
 def pegar_usuario(numero):
-    usuarios_file = open("../../cadastros.json")
+    usuarios_file = open(path_arquivo)
     usuarios = usuarios_file.read()
     usuarios_file.close()
     usuarios = json.loads(usuarios)
