@@ -18,6 +18,8 @@ def bot():
     msg = resp.message()
     incoming_msg = incoming_msg.replace(" ", "_")
     marcia_disse = marcia.say(numero+" "+incoming_msg)
+    print("Mensagem enviada: ", numero+" "+incoming_msg)
+    print("Marcia respondeu: ", marcia_disse)
     msg.body(marcia_disse)
     return str(resp)
 
