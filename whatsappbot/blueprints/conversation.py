@@ -17,6 +17,7 @@ def bot():
     resp = MessagingResponse()
     msg = resp.message()
     incoming_msg = incoming_msg.replace(" ", "_")
+    numero = numero.replace("whatsapp:", "")
     marcia_disse = marcia.say(numero+" "+incoming_msg)
     print("Mensagem enviada: ", numero+" "+incoming_msg)
     print("Marcia respondeu: ", marcia_disse)
