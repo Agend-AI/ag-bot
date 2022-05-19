@@ -27,6 +27,7 @@ def bot():
     agendai_response = "Desculpa, não entendi"
     while tentativas < tentativa_resposta_correta and agendai_response == "Desculpa, não entendi":
         agendai_response = users_conversation[numero].say(numero+" "+incoming_msg)
+        tentativas += 1
     print(f"Mensagem enviada: {numero} {incoming_msg}")
     print(f"Marcia respondeu: {agendai_response}")
     msg.body(agendai_response)
