@@ -8,7 +8,6 @@ def create_app():
     app = Flask(__name__)
     start_thread()
     init_conf(app)
-    
     load_modules(app)
     return app
 

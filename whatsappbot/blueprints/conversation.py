@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from twilio.twiml.messaging_response import MessagingResponse
-from whatsappbot.events import marcia
+from whatsappbot.events import create_bot, users_conversation
 
 
 bp = Blueprint("conversation", __name__)
@@ -18,11 +18,14 @@ def bot():
     msg = resp.message()
     incoming_msg = incoming_msg.replace(" ", "_")
     numero = numero.replace("whatsapp:", "")
-    global marcia
-    marcia_disse = marcia.say(numero+" "+incoming_msg)
-    print("Mensagem enviada: ", numero+" "+incoming_msg)
-    print("Marcia respondeu: ", marcia_disse)
-    msg.body(marcia_disse)
+    incoming_msg = incoming_msg.lower().strip()
+    if numero not in users_conversation:
+        agendai_bot = create_bot()
+        users_conversation[numero] = agendai_bot
+    agendai_response = users_conversation[numero].say(numero+" "+incoming_msg)
+    print(f"Mensagem enviada: {numero} {incoming_msg}")
+    print(f"Marcia respondeu: {agendai_response}")
+    msg.body(agendai_response)
     return str(resp)
 
     
