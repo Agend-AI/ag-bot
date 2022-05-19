@@ -1,4 +1,10 @@
 {% topic apresentacao %}
+
+    {% block %}
+      {% client %}(\+\d{12,13})\s.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar viagens|agendar evento|criar agendamento).*{% endclient %}
+      {% response %}{% call escolha_e_verificar_numero: %1 %2 %}{% endresponse %}
+    {% endblock %}
+
     {% block %}
       {% client %}(\+\d{12,13})\s.*(Oi|oi|ola).*{% endclient %}
       {% response %}{% call verificar_numero: %1 %}{% endresponse %}

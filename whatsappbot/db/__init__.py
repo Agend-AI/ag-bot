@@ -1,8 +1,9 @@
 import json
-import re
+from whatsappbot.services.regex_validation import *
+from whatsappbot.services.weekday import *
 import requests
 
-GET_NUMBER = re.compile(r'(\+\d{12,13})')
+
 API_GET_EVENTS = "https://agenda-ai-api.herokuapp.com/event"
 path_arquivo = "cadastros.json"
 
@@ -58,7 +59,10 @@ def listar_visitas_formatas(numero):
     visitas = listar_visitas(numero)
     visitas_formatadas = ""
     for i, v in enumerate(visitas):
-        visitas_formatadas += f"*Visita: {i+1}*:\n{v['summary']}\n{v['description']}\nMarcado para: {v['start']['dateTime']}\n\n"
+        data = convert_data_to_dd_mm_yyyy(v['start']['dateTime'])
+        formatar_data = f"{get_dayname_from_data(data).title()} ({data})"
+        description = v['description'].replace(numero, "")
+        visitas_formatadas += f"*Visita: {i+1}*:\n{v['summary']}\n{description}\nMarcado para: {formatar_data}\n\n"
     return visitas_formatadas
 
 
