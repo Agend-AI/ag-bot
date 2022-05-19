@@ -3,10 +3,7 @@
   {% response %}{% call escolha_e_verificar_numero: %1 %2 %}{% endresponse %}
 {% endblock %}
 
-{% block %}
-  {% client %}(\+\d{12,13})\s.*(Oi|oi|ola).*{% endclient %}
-  {% response %}{% call verificar_numero: %1 %}{% endresponse %}
-{% endblock %}
+
 
 {% block %}
   {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
@@ -17,14 +14,19 @@
 {% endblock %}
 
 {% block %}
+  {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
+  {% prev %}Pode me informar seu nome?{% endprev %}
+  {% response %}{% call cadastrar_numero: %resposta %1 %}{% endresponse %}
+{% endblock %}
+
+{% block %}
   {% client %}(\+\d{12,13})\s(esquece|Esquece|Esquece |apaga){% endclient %}
   {% response %}{% call esquecer_usuario: %2 %1 %}{% endresponse %}
 {% endblock %}
 
 {% block %}
-  {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
-  {% prev %}Pode me informar seu nome?{% endprev %}
-  {% response %}{% call cadastrar_numero: %resposta %1 %}{% endresponse %}
+  {% client %}(\+\d{12,13})\s.*(Oi|oi|ola).*{% endclient %}
+  {% response %}{% call verificar_numero: %1 %}{% endresponse %}
 {% endblock %}
 
 {% block %}
