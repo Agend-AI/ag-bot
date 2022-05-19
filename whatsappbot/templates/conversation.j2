@@ -1,49 +1,51 @@
-{% topic apresentacao %}
+{% block %}
+  {% client %}(\+\d{12,13})\s.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar viagens|agendar evento|criar agendamento).*{% endclient %}
+  {% response %}{% call escolha_e_verificar_numero: %1 %2 %}{% endresponse %}
+{% endblock %}
 
-    {% block %}
-      {% client %}(\+\d{12,13})\s.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar viagens|agendar evento|criar agendamento).*{% endclient %}
-      {% response %}{% call escolha_e_verificar_numero: %1 %2 %}{% endresponse %}
-    {% endblock %}
+{% block %}
+  {% client %}(\+\d{12,13})\s.*(Oi|oi|ola).*{% endclient %}
+  {% response %}{% call verificar_numero: %1 %}{% endresponse %}
+{% endblock %}
 
-    {% block %}
-      {% client %}(\+\d{12,13})\s.*(Oi|oi|ola).*{% endclient %}
-      {% response %}{% call verificar_numero: %1 %}{% endresponse %}
-    {% endblock %}
+{% block %}
+  {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
+  {% prev %}Olá, seja bem-vindo a Casa do Celso! Vi que você não possui cadastro conosco.*{% endprev %}
+  {% response %}
+  {% call pergunta_sim_nao: %resposta %}
+  {% endresponse %}
+{% endblock %}
 
-    {% block %}
-      {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
-      {% prev %}Olá, seja bem-vindo a Casa do Celso! Vi que você não possui cadastro conosco.*{% endprev %}
-      {% response %}
-      {% call pergunta_sim_nao: %resposta %}
-      {% endresponse %}
-    {% endblock %}
+{% block %}
+  {% client %}(\+\d{12,13})\s(esquece|Esquece|Esquece |apaga){% endclient %}
+  {% response %}{% call esquecer_usuario: %2 %1 %}{% endresponse %}
+{% endblock %}
 
-    {% block %}
-      {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
-      {% prev %}Pode me informar seu nome?{% endprev %}
-      {% response %}{% call cadastrar_numero: %resposta %1 %}{% endresponse %}
-    {% endblock %}
+{% block %}
+  {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
+  {% prev %}Pode me informar seu nome?{% endprev %}
+  {% response %}{% call cadastrar_numero: %resposta %1 %}{% endresponse %}
+{% endblock %}
 
-    {% block %}
-      {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
-      {% prev %}.*O que você gostaria de fazer?.*{% endprev %}
-      {% response %}{% call escolhas: %resposta %1 %}{% endresponse %}
-    {% endblock %}
+{% block %}
+  {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
+  {% prev %}.*O que você gostaria de fazer?.*{% endprev %}
+  {% response %}{% call escolhas: %resposta %1 %}{% endresponse %}
+{% endblock %}
 
-    {% block %}
-      {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
-      {% prev %}.*Temos disponibilidades nos dias.*{% endprev %}
-      {% response %}{% call escolha_dia: %resposta %1 %}{% endresponse %}
-    {% endblock %}
+{% block %}
+  {% client %}(\+\d{12,13})(?P<resposta>.*){% endclient %}
+  {% prev %}.*Temos disponibilidades nos dias.*{% endprev %}
+  {% response %}{% call escolha_dia: %resposta %1 %}{% endresponse %}
+{% endblock %}
 
-    {% block %}
-      {% client %}(\+\d{12,13})\s(.*){% endclient %}
-      {% prev %}(.*)Quantas pessoas(.*){% endprev %}
-      {% response %}{% call quantidade_pessoas: %2 %1 %}{% endresponse %}
-    {% endblock %}
+{% block %}
+  {% client %}(\+\d{12,13})\s(.*){% endclient %}
+  {% prev %}(.*)Quantas pessoas(.*){% endprev %}
+  {% response %}{% call quantidade_pessoas: %2 %1 %}{% endresponse %}
+{% endblock %}
 
-    {% block %}
-      {% client %}(.*){% endclient %}
-      {% response %}Desculpa, não entendi{% endresponse %}
-    {% endblock %}
-{% endtopic %}
+{% block %}
+  {% client %}(.*){% endclient %}
+  {% response %}Desculpa, não entendi{% endresponse %}
+{% endblock %}

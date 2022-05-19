@@ -66,3 +66,7 @@ def listar_visitas_formatas(numero):
     return visitas_formatadas
 
 
+def limpar_registros():
+    usuarios_file = open(path_arquivo, "w")
+    usuarios_file.write("[]")
+    usuarios_file.close()
