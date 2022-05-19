@@ -5,13 +5,13 @@
 
 {% block %}
   {% client %}(\+\d{12,13})\s(.*){% endclient %}
-  {% prev %}Olá, seja bem-vindo a Casa do Celso! Vi que você não possui cadastro conosco.*{% endprev %}
+  {% prev %}.*possui cadastro conosco.*{% endprev %}
   {% response %}{% call pergunta_sim_nao: %2 %}{% endresponse %}
 {% endblock %}
 
 {% block %}
   {% client %}(\+\d{12,13})\s(.*){% endclient %}
-  {% prev %}Pode me informar seu nome?{% endprev %}
+  {% prev %}.*Pode me informar.*{% endprev %}
   {% response %}{% call cadastrar_numero: %2 %1 %}{% endresponse %}
 {% endblock %}
 
@@ -27,7 +27,7 @@
 
 {% block %}
   {% client %}(\+\d{12,13})\s(.*){% endclient %}
-  {% prev %}.*O que você gostaria de fazer?.*{% endprev %}
+  {% prev %}.*O que você gostaria.*{% endprev %}
   {% response %}{% call escolhas: %resposta %1 %}{% endresponse %}
 {% endblock %}
 
