@@ -1,4 +1,4 @@
-{% group agenda %}
+{% topic agenda %}
     {% block %}
         {% client %}(\+\d{12,13})\s.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar viagens|agendar evento|criar agendamento).*{% endclient %}
         {% response %}{% call escolha_e_verificar_numero: %1 %2 %}{% endresponse %}
@@ -43,9 +43,11 @@
         {% prev %}(.*)Quantas pessoas(.*){% endprev %}
         {% response %}{% call quantidade_pessoas: %2 %1 %}{% endresponse %}
     {% endblock %}
+{% endtopic %}
 
+{% topic naoEntende %}
     {% block %}
         {% client %}.*{% endclient %}
         {% response %}Desculpa, não entendi{% endresponse %}
     {% endblock %}
-{% endgroup %}
+{% endtopic %}
