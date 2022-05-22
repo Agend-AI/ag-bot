@@ -20,6 +20,7 @@ def bot():
     numero = numero.replace("whatsapp:", "")
     incoming_msg = incoming_msg.lower().strip()
     if numero not in users_conversation:
+        print("Entrou aqui")
         agendai_bot = create_bot()
         users_conversation[numero] = agendai_bot
     user_say = numero+" "+incoming_msg
