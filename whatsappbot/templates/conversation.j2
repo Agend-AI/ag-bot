@@ -1,4 +1,5 @@
 {% topic agenda %}
+
     {% block %}
         {% client %}(\+\d{12,13})\s.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar viagens|agendar evento|criar agendamento).*{% endclient %}
         {% response %}{% call escolha_e_verificar_numero: %1 %2 %}{% endresponse %}
@@ -6,13 +7,13 @@
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}.*possui cadastro conosco.*{% endprev %}
+        {% prev %}(.*)(possui\scadastro\sconosco)(.*){% endprev %}
         {% response %}{% call pergunta_sim_nao: %2 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}.*Pode me informar.*{% endprev %}
+        {% prev %}(.*)(Pode\sme\sinformar)(.*){% endprev %}
         {% response %}{% call cadastrar_numero: %2 %1 %}{% endresponse %}
     {% endblock %}
 
@@ -28,26 +29,26 @@
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}.*O que você gostaria.*{% endprev %}
+        {% prev %}(.*)(O\sque\svocê\sgostaria)(.*){% endprev %}
         {% response %}{% call escolhas: %resposta %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}.*Temos disponibilidades nos dias.*{% endprev %}
+        {% prev %}(.*)(Temos\sdisponibilidades\snos\sdias)(.*){% endprev %}
         {% response %}{% call escolha_dia: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}(.*)Quantas pessoas(.*){% endprev %}
+        {% prev %}(.*)(Quantas\spessoas)(.*){% endprev %}
         {% response %}{% call quantidade_pessoas: %2 %1 %}{% endresponse %}
     {% endblock %}
 {% endtopic %}
 
 {% topic naoEntende %}
     {% block %}
-        {% client %}.*{% endclient %}
+        {% client %}(.*){% endclient %}
         {% response %}Desculpa, não entendi{% endresponse %}
     {% endblock %}
 {% endtopic %}

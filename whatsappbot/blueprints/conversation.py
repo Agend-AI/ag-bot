@@ -22,13 +22,9 @@ def bot():
     if numero not in users_conversation:
         agendai_bot = create_bot()
         users_conversation[numero] = agendai_bot
-    tentativa_resposta_correta = 10
-    tentativas = 0
-    agendai_response = "Desculpa, não entendi"
-    while tentativas < tentativa_resposta_correta and agendai_response == "Desculpa, não entendi":
-        agendai_response = users_conversation[numero].say(numero+" "+incoming_msg)
-        tentativas += 1
-    print(f"Mensagem enviada: {numero} {incoming_msg}")
+    user_say = numero+" "+incoming_msg
+    agendai_response = users_conversation[numero].say(user_say)
+    print(f"Mensagem enviada: {user_say}")
     print(f"Marcia respondeu: {agendai_response}")
     msg.body(agendai_response)
     return str(resp)
