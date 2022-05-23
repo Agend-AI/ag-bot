@@ -2,10 +2,10 @@ import json
 from whatsappbot.services.regex_validation import *
 from whatsappbot.services.weekday import *
 import requests
-
+import os
 
 API_GET_EVENTS = "https://agenda-ai-api.herokuapp.com/event"
-path_arquivo = "cadastros.json"
+path_arquivo = os.environ.get("DB_PATH") or "../../cadastros.json"
 
 def registrar_usuario(numero, nome):
     usuarios_file = open(path_arquivo)

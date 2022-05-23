@@ -81,8 +81,6 @@ def ajuste_dias_semana_por_data():
         create_days_week()
         time.sleep(WAIT_8_HOURS)
 
-create_days_week()
-
 def get_days_options_format():
     days = ""
     for i, d in enumerate(dias_semana_por_data.keys()):
