@@ -30,13 +30,13 @@
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
         {% prev %}(.*)(O\sque\svocê\sgostaria)(.*){% endprev %}
-        {% response %}{% if {% call escolhas: %2 %1 %}==listar %}{% call listar_agendamentos: %2 %1 %}{% elif {% call escolhas: %2 %1 %}==agendar %}Temos disponibilidade nos dias:{% call opcoes_disponiveis: %1 %}{% else %}Não entendi, pode repetir?{% endif %}{% endresponse %}
+        {% response %}{% call listar_agendamentos: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
         {% prev %}(Temos disponibilidades nos dias\:)\n.*\n.*\n.*\n.*\n.*\n.*\n.*{% endprev %}
-        {% response %}{% if {% call escolha_dia: %2 %1 %}==True %}Quantas pessoas irão?{% else %}Desculpe mas não entendi, pode repetir?{% endif %}{% endresponse %}
+        {% response %}{% call escolha_dia: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
