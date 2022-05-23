@@ -5,7 +5,7 @@ users_conversation = {
 
 }
 
-agendai = Chat(default_template="../templates/conversation.j2", language='pt-br')
+agendai = Chat(default_template="whatsapp/templates/conversation.j2", language='pt-br')
 
 
 
