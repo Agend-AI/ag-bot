@@ -30,12 +30,12 @@
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
         {% prev %}(.*)(O\sque\svocê\sgostaria)(.*){% endprev %}
-        {% response %}{% call escolhas: %resposta %1 %}{% endresponse %}
+        {% response %}{% call escolhas: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}(.*)(Temos\sdisponibilidades\snos\sdias)(.*){% endprev %}
+        {% prev %}(Temos disponibilidades nos dias\:)\n.*\n.*\n.*\n.*\n.*\n.*\n.*{% endprev %}
         {% response %}{% call escolha_dia: %2 %1 %}{% endresponse %}
     {% endblock %}
 
