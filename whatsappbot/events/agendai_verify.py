@@ -4,6 +4,16 @@ from whatsappbot.db import registrar_usuario, usuario_existe, nome_usuario, list
 from whatsappbot.services.weekday import *
 from whatsappbot.services.regex_validation import *
 
+@register_call("listar_agendamentos")
+def listar_agendamentos(session, query):
+    escolha, numero = query.split()
+    escolha = escolha.replace("_", " ").strip().lower()
+    return listar_visitas_formatas(numero)
+
+@register_call("opcoes_disponiveis")
+def opcoes_disponiveis(session, query):
+    return get_days_options_format()
+
 @register_call("escolha_e_verificar_numero")
 def escolha_e_verificar_numero(session, query: str):
     numero, escolha = query.split()
@@ -57,9 +67,9 @@ def escolhas(session, query):
     escolha = escolha.replace("_", " ").strip().lower()
     print("Escolha opção: ", escolha)
     if escolha in "2 - listar minhas visitas marcadas":
-        return listar_visitas_formatas(numero)
+        return "listar"#listar_visitas_formatas(numero)
     if escolha in "1 - agendar visita":
-        return "Temos disponibilidades nos dias:\n" + get_days_options_format()
+        return "agendar"#"Temos disponibilidades nos dias:\n" + get_days_options_format()
     return "Não entendi, pode repetir?"
 
 
@@ -72,8 +82,8 @@ def escolha_dia(session, query):
     for dia in dias:
         if escolha.lower().strip() in dia.lower():
             session.memory["dia"] = escolha
-            return "Quantas pessoas irão?"
-    return "Desculpe mas não entendi, pode repetir?"
+            return "True"
+    return "False"
 
 
 @register_call("quantidade_pessoas")
