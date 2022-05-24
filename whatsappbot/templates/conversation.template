@@ -7,7 +7,7 @@
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}(.*)(possui\scadastro\sconosco)(.*){% endprev %}
+        {% prev %}[\s\S]+(possui\scadastro\sconosco)[\s\S]+{% endprev %}
         {% response %}{% call pergunta_sim_nao: %2 %}{% endresponse %}
     {% endblock %}
 
@@ -29,13 +29,13 @@
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}(.*)(O\sque\svocê\sgostaria)(.*){% endprev %}
-        {% response %}{% call listar_agendamentos: %2 %1 %}{% endresponse %}
+        {% prev %}(.*)(O\sque\svocê\sgostaria)[\s\S]+{% endprev %}
+        {% response %}{% call escolhas: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}(Temos disponibilidades nos dias\:)\n.*\n.*\n.*\n.*\n.*\n.*\n.*{% endprev %}
+        {% prev %}(Temos disponibilidades nos dias\:)[\s\S]+{% endprev %}
         {% response %}{% call escolha_dia: %2 %1 %}{% endresponse %}
     {% endblock %}
 
@@ -43,6 +43,12 @@
         {% client %}(\+\d{12,13})\s(.*){% endclient %}
         {% prev %}(.*)(Quantas\spessoas)(.*){% endprev %}
         {% response %}{% call quantidade_pessoas: %2 %1 %}{% endresponse %}
+    {% endblock %}
+
+    {% block %}
+        {% client %}(\+\d{12,13})\s(.*){% endclient %}
+        {% prev %}Escolha abaixo o[\s\S]+{% endprev %}
+        {% response %}{% call verificar_numero: %1 %}{% endresponse %}
     {% endblock %}
 {% endtopic %}
 

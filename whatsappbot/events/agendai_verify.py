@@ -5,6 +5,12 @@ from whatsappbot.services.weekday import *
 from whatsappbot.services.regex_validation import *
 
 
+def opcoes_escolhas():
+    return "1 - Agendar visita\n" \
+           "2 - Listar minhas visitas marcadas\n" \
+           "3 - Alterar visita marcada\n" \
+           "4 - Excluir visita marcada"
+
 @register_call("escolha_e_verificar_numero")
 def escolha_e_verificar_numero(session, query: str):
     numero, escolha = query.split()
@@ -28,9 +34,7 @@ def verificar_numero(session, query: str):
                "1 - Sim\n" \
                "2 - Não"
     return f"Olá, {nome_usuario(query)}, seja bem-vindo a Casa do Celso! O que você gostaria de fazer?\n" \
-           "1 - Agendar visita\n" \
-           "2 - Listar minhas visitas marcadas\n" \
-           "3 - Conversar com o filho do Celso"
+           + opcoes_escolhas()
 
 
 @register_call("cadastrar_numero")
@@ -40,9 +44,7 @@ def cadastrar_numero(session, query):
     registrar_usuario(numero, nome)
     if "escolha_antecipada" not in session.memory:
         return "Sejá bem-vindo :) O que você gostaria de fazer?\n" \
-               "1 - Agendar visita\n" \
-               "2 - Listar minhas visitas marcadas\n" \
-               "3 - Conversar com o filho do Celso"
+               + opcoes_escolhas()
 
     if session.memory["escolha_antecipada"] in "2 - listar minhas visitas marcadas" or session.memory[
         "escolha_antecipada"] in ["listar", "agendamentos", "eventos", "listar viagens"]:
@@ -61,8 +63,24 @@ def escolhas(session, query):
         return listar_visitas_formatas(numero)
     if escolha in "1 - agendar visita":
         return "Temos disponibilidades nos dias:\n" + get_days_options_format()
+    if escolha in "3 - Alterar visita marcada":
+        return "Escolha abaixo o número da visita que deseja alterar:\n"+listar_visitas_formatas(numero)
+    if escolha in "4 - Excluir visita marcada":
+        return ""
+
     return "Não entendi, pode repetir?"
 
+@register_call("alterar_visita_dia")
+def alterar_visita_dia(session, query):
+    escolha, numero = query.split()
+    escolha = escolha.replace("_", " ").strip().lower()
+    return "Qual dia você gostaria de remarcar?"
+
+@register_call("alterar_visita_pessoas")
+def alterar_visita_pessoas(session, query):
+    escolha, numero = query.split()
+    escolha = escolha.replace("_", " ").strip().lower()
+    return "Quantas pessoas irão?"
 
 @register_call("escolha_dia")
 def escolha_dia(session, query):

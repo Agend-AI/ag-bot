@@ -1,8 +1,3 @@
-[default]
-EXTENSIONS = [
-    "whatsappbot.blueprints.conversation"
-]
-
 [production]
 EXTENSIONS = [
     "whatsappbot.blueprints.conversation"
