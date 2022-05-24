@@ -1,55 +1,84 @@
 {% topic agenda %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\s.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar viagens|agendar evento|criar agendamento).*{% endclient %}
+        {% client %}(\+\d{12,13})\:.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar.viagens|agendar.evento|criar.agendamento|alterar|alterar.visita|excluir|excluir.visita|desmarcar|desmarcar.visita|desmarca.).*{% endclient %}
         {% response %}{% call escolha_e_verificar_numero: %1 %2 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}[\s\S]+(possui\scadastro\sconosco)[\s\S]+{% endprev %}
+        {% client %}(\+\d{12,13})\:(.*){% endclient %}
+        {% prev %}[\s\S]+(possui.cadastro.conosco)[\s\S]+{% endprev %}
         {% response %}{% call pergunta_sim_nao: %2 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}(.*)(Pode\sme\sinformar)(.*){% endprev %}
+        {% client %}(\+\d{12,13})\:(.*){% endclient %}
+        {% prev %}(.*)(Pode.me.informar)(.*){% endprev %}
         {% response %}{% call cadastrar_numero: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\s(esquece|Esquece|Esquece |apaga){% endclient %}
+        {% client %}(\+\d{12,13})\:(esquece.|Esquece.|apaga.){% endclient %}
         {% response %}{% call esquecer_usuario: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\s.*(Oi|oi|ola).*{% endclient %}
+        {% client %}(\+\d{12,13})\:.*(Oi|oi|ola).*{% endclient %}
         {% response %}{% call verificar_numero: %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}(.*)(O\sque\svocê\sgostaria)[\s\S]+{% endprev %}
+        {% client %}(\+\d{12,13})\:(.*){% endclient %}
+        {% prev %}(.*)(O.que.você.gostaria)[\s\S]+{% endprev %}
         {% response %}{% call escolhas: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}(Temos disponibilidades nos dias\:)[\s\S]+{% endprev %}
+        {% client %}(\+\d{12,13})\:(.*){% endclient %}
+        {% prev %}(Temos.disponibilidades.nos.dias\:)[\s\S]+{% endprev %}
         {% response %}{% call escolha_dia: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}(.*)(Quantas\spessoas)(.*){% endprev %}
+        {% client %}(\+\d{12,13})\:(.*){% endclient %}
+        {% prev %}Quantas.pessoas(.*){% endprev %}
         {% response %}{% call quantidade_pessoas: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\s(.*){% endclient %}
-        {% prev %}Escolha abaixo o[\s\S]+{% endprev %}
-        {% response %}{% call verificar_numero: %1 %}{% endresponse %}
+        {% client %}(\+\d{12,13})\:(.*){% endclient %}
+        {% prev %}Escolha.abaixo.o.número.da.visita.que.deseja.alterar[\s\S]+{% endprev %}
+        {% response %}{% call alterar_visita_dia: %2 %1 %}{% endresponse %}
     {% endblock %}
+
+    {% block %}
+        {% client %}(\+\d{12,13})\:(.*){% endclient %}
+        {% prev %}Para.qual.dia.você.gostaria.de.remarcar[\s\S]+{% endprev %}
+        {% response %}{% call alterar_visita_pessoas: %2 %1 %}{% endresponse %}
+    {% endblock %}
+
+    {% block %}
+        {% client %}(\+\d{12,13})\:(.*){% endclient %}
+        {% prev %}Para.quantas.pessoas[\s\S]+{% endprev %}
+        {% response %}{% call alterar_visita_concluida: %2 %1 %}{% endresponse %}
+    {% endblock %}
+
+    {% block %}
+        {% client %}(\+\d{12,13})\:(última|ultima|last|última.visita|ultima.visita).*{% endclient %}
+        {% response %}{% call ultima_visita: %2 %1 %}{% endresponse %}
+    {% endblock %}
+
+    {% block %}
+        {% client %}(\+\d{12,13})\:(.*){% endclient %}
+        {% prev %}Qual.das.visitas.abaixo.você.gostaria.de.desmarcar[\s\S]+{% endprev %}
+        {% response %}{% call excluir_visita: %2 %1 %}{% endresponse %}
+    {% endblock %}
+
+    {% block %}
+        {% client %}(\+\d{12,13})\:(excluir.todas.as.visitas)(.*){% endclient %}
+        {% response %}{% call excluir_todas_visitas: %2 %1 %}{% endresponse %}
+    {% endblock %}
+
 {% endtopic %}
 
 {% topic naoEntende %}

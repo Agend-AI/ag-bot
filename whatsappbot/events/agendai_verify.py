@@ -1,6 +1,9 @@
 import requests
 from chatbot import register_call
-from whatsappbot.db import registrar_usuario, usuario_existe, nome_usuario, listar_visitas_formatas, limpar_registros
+from whatsappbot.db import registrar_usuario, usuario_existe, nome_usuario,\
+                           listar_visitas_formatas, limpar_registros,\
+                           ultima_visita_agendada_formatada, API_EVENTS, \
+                           pegar_id_visita, pegar_todos_os_id_visitas
 from whatsappbot.services.weekday import *
 from whatsappbot.services.regex_validation import *
 
@@ -24,6 +27,12 @@ def escolha_e_verificar_numero(session, query: str):
         return listar_visitas_formatas(numero)
     if escolha in "1 - agendar visita" or escolha in ["agendar", "agendar evento", "criar agendamento"]:
         return "Temos disponibilidades nos dias:\n" + get_days_options_format()
+
+    if escolha in "3 - alterar visita marcada":
+        return "Escolha abaixo o número da visita que deseja alterar:\n"+listar_visitas_formatas(numero)
+
+    if escolha in "4 - excluir visita marcada":
+        return "Qual das visitas abaixo você gostaria de desmarcar (*Excluir*)? Diga o número da visita:\n"+listar_visitas_formatas(numero)
 
 
 @register_call("verificar_numero")
@@ -52,7 +61,10 @@ def cadastrar_numero(session, query):
     if session.memory["escolha_antecipada"] in "1 - agendar visita" or session.memory["escolha_antecipada"] in [
         "agendar", "agendar evento", "criar agendamento"]:
         return "Temos disponibilidades nos dias:\n" + get_days_options_format()
-
+    if session.memory["escolha_antecipada"] in "3 - alterar visita marcada":
+        return "Escolha abaixo o número da visita que deseja alterar:\n"+listar_visitas_formatas(numero)
+    if session.memory["escolha_antecipada"] in "4 - excluir visita marcada":
+        return "Qual das visitas abaixo você gostaria de desmarcar (*Excluir*)? Diga o número da visita:\n"+listar_visitas_formatas(numero)
 
 @register_call("escolhas")
 def escolhas(session, query):
@@ -63,10 +75,10 @@ def escolhas(session, query):
         return listar_visitas_formatas(numero)
     if escolha in "1 - agendar visita":
         return "Temos disponibilidades nos dias:\n" + get_days_options_format()
-    if escolha in "3 - Alterar visita marcada":
+    if escolha in "3 - alterar visita marcada":
         return "Escolha abaixo o número da visita que deseja alterar:\n"+listar_visitas_formatas(numero)
-    if escolha in "4 - Excluir visita marcada":
-        return ""
+    if escolha in "4 - excluir visita marcada":
+        return "Qual das visitas abaixo você gostaria de desmarcar (*Excluir*)? Diga o número da visita:\n"+listar_visitas_formatas(numero)
 
     return "Não entendi, pode repetir?"
 
@@ -74,13 +86,29 @@ def escolhas(session, query):
 def alterar_visita_dia(session, query):
     escolha, numero = query.split()
     escolha = escolha.replace("_", " ").strip().lower()
-    return "Qual dia você gostaria de remarcar?"
+    session.memory["index_dia"] = escolha
+    return "Para qual dia você gostaria de remarcar?\n" + get_days_options_format()
 
 @register_call("alterar_visita_pessoas")
 def alterar_visita_pessoas(session, query):
     escolha, numero = query.split()
     escolha = escolha.replace("_", " ").strip().lower()
-    return "Quantas pessoas irão?"
+    session.memory["dia"] = escolha
+    return "Para quantas pessoas?"
+
+@register_call("alterar_visita_concluida")
+def alterar_visita_pessoas(session, query):
+    escolha, numero = query.split()
+    escolha = escolha.replace("_", " ").strip().lower()
+    dia = session.memory["dia"]
+    dia = validar_dia(dia)
+    dia = int(dia)
+    d_inicial = getDayFormatted(dia)
+    d_final = getDayFormatted(dia, 12)
+    response = create_response(numero, dia, escolha, d_inicial, d_final)
+    url = API_EVENTS + "/" + pegar_id_visita(numero, int(session.memory["index_dia"]))
+    requests.put(url, json=response)
+    return "Ótimo! Você remarcou sua visita para:\n" + ultima_visita_agendada_formatada(numero)
 
 @register_call("escolha_dia")
 def escolha_dia(session, query):
@@ -99,31 +127,36 @@ def escolha_dia(session, query):
 def quantidade_pessoas(session, query):
     escolha, numero = query.split()
     escolha = escolha.replace("_", " ").strip().lower()
-    dia = session.memory["dia"]
 
+    dia = session.memory["dia"]
+    dia = validar_dia(dia)
+    dia = int(dia)
+    d_inicial = getDayFormatted(dia)
+    d_final = getDayFormatted(dia, 12)
+    response = create_response(numero, dia, escolha, d_inicial, d_final)
+
+    requests.post(API_EVENTS, json=response)
+    return "Visita agendada com sucesso!"
+
+
+def validar_dia(dia):
     if GET_DATA.search(dia):
         dia = GET_DATA.search(dia).group()
         dia = get_day_from_data(dia)
-
+        return dia
     elif GET_OPTION.search(dia):
         dia = GET_OPTION.search(dia).group()
         dias = get_days_options_format().split("\n")
         dia = dias[int(dia)-1]
         dayname = GET_DAYNAME.search(dia).group()
         dia = get_day_from_dayname(dayname)
+        return dia
     elif GET_DAYNAME.search(dia):
         dia = GET_DAYNAME.search(dia).group()
         dia = get_day_from_dayname(dia)
+        return dia
     else:
         return "Desculpe, não consegui identificar o dia escolhido!"
-
-    dia = int(dia)
-    d_inicial = getDayFormatted(dia)
-    d_final = getDayFormatted(dia, 12)
-    response = create_response(numero, dia, escolha, d_inicial, d_final)
-
-    requests.post("https://agenda-ai-api.herokuapp.com/event", json=response)
-    return "Visita agendada com sucesso!"
 
 
 @register_call("pergunta_sim_nao")
@@ -137,6 +170,30 @@ def pergunta_sim_nao(session, query):
 def esquecer_usuario(session, query):
     limpar_registros()
     return "Esquecido!"
+
+
+@register_call("ultima_visita")
+def ultima_visita(session, query):
+    escolha, numero = query.split()
+    ultima = ultima_visita_agendada_formatada(numero)
+    return "A sua última visita agendada é esta:\n"+ultima
+
+@register_call("excluir_visita")
+def excluir_visita(session, query):
+    escolha, numero = query.split()
+    escolha = escolha.replace("_", " ").strip().lower()
+    url = API_EVENTS + "/" + pegar_id_visita(numero, int(escolha))
+    requests.delete(url)
+    return "Sua visita foi desmarcada(excluída)!!"
+
+@register_call("excluir_todas_visitas")
+def excluir_todas_visitas(session, query):
+    escolha, numero = query.split()
+    ids = pegar_todos_os_id_visitas(numero)
+    for id_v in ids:
+        url = API_EVENTS + "/" + id_v
+        requests.delete(url)
+    return "Todas as suas visitas foram desmarcadas (excluídas)!!"
 
 
 def create_response(numero, dia, escolha, data_inicial, data_final):

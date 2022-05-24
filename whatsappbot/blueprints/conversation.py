@@ -22,7 +22,7 @@ def bot():
     if numero not in users_conversation:
         current_app.agendai.start_new_session(session_id=numero)
         users_conversation[numero] = True
-    user_say = numero+" "+incoming_msg
+    user_say = numero+":"+incoming_msg
     agendai_response = current_app.agendai.say(user_say)
     print(f"Mensagem enviada: {user_say}")
     print(f"Marcia respondeu: {agendai_response}")
