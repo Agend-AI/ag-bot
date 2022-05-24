@@ -1,6 +1,6 @@
 from whatsappbot.services.weekday import *
 from whatsappbot.events import users_conversation, agendai
-start_thread()
+
 
 while True:
     incoming_msg = input("mensagem enviada: ")

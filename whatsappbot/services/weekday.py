@@ -76,12 +76,13 @@ def get_day_from_data(data):
     return -1
 
 
-def ajuste_dias_semana_por_data():
-    while True:
-        create_days_week()
-        time.sleep(WAIT_8_HOURS)
+# def ajuste_dias_semana_por_data():
+#     while True:
+#         create_days_week()
+#         time.sleep(WAIT_8_HOURS)
 
 def get_days_options_format():
+    create_days_week()
     days = ""
     for i, d in enumerate(dias_semana_por_data.keys()):
         days += f"{i+1} - {dias_semana_por_data[d][0].title()} ({dias_semana_por_data[d][1]})\n"
@@ -94,6 +95,7 @@ def convert_data_to_dd_mm_yyyy(data):
     data_formated = f"{data_formated[2]}{separator}{data_formated[1]}{separator}{data_formated[0]}"
     return data_formated
 
-def start_thread():
-    t = threading.Thread(target=ajuste_dias_semana_por_data, args=())
-    t.start()
+create_days_week()
+# def start_thread():
+#     t = threading.Thread(target=ajuste_dias_semana_por_data, args=())
+#     t.start()
