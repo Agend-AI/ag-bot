@@ -20,10 +20,11 @@ def bot():
     numero = numero.replace("whatsapp:", "")
     incoming_msg = incoming_msg.lower().strip()
     if numero not in users_conversation:
+        print("Passou aqui. Valor em users_conversation:", users_conversation)
         current_app.agendai.start_new_session(session_id=numero)
         users_conversation[numero] = True
     user_say = numero+":"+incoming_msg
-    agendai_response = current_app.agendai.say(user_say)
+    agendai_response = current_app.agendai.say(user_say, session_id=numero)
     print(f"Mensagem enviada: {user_say}")
     print(f"Marcia respondeu: {agendai_response}")
     msg.body(agendai_response)
