@@ -1,6 +1,11 @@
 {% topic agenda %}
 
     {% block %}
+        {% client %}(\+\d{12,13})\:(excluir.todas.as.visitas)(.*){% endclient %}
+        {% response %}{% call excluir_todas_visitas: %2 %1 %}{% endresponse %}
+    {% endblock %}
+
+    {% block %}
         {% client %}(\+\d{12,13})\:.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar.viagens|agendar.evento|criar.agendamento|alterar|alterar.visita|excluir|excluir.visita|desmarcar|desmarcar.visita|desmarca.).*{% endclient %}
         {% response %}{% call escolha_e_verificar_numero: %1 %2 %}{% endresponse %}
     {% endblock %}
@@ -72,11 +77,6 @@
         {% client %}(\+\d{12,13})\:(.*){% endclient %}
         {% prev %}Qual.das.visitas.abaixo.você.gostaria.de.desmarcar[\s\S]+{% endprev %}
         {% response %}{% call excluir_visita: %2 %1 %}{% endresponse %}
-    {% endblock %}
-
-    {% block %}
-        {% client %}(\+\d{12,13})\:(excluir.todas.as.visitas)(.*){% endclient %}
-        {% response %}{% call excluir_todas_visitas: %2 %1 %}{% endresponse %}
     {% endblock %}
 
 {% endtopic %}
