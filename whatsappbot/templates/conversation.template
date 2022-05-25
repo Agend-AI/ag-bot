@@ -6,7 +6,7 @@
     {% endblock %}
 
     {% block %}
-        {% client %}(\+\d{12,13})\:.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar.viagens|agendar.evento|criar.agendamento|alterar|alterar.visita|excluir|excluir.visita|desmarcar|desmarcar.visita|desmarca.).*{% endclient %}
+        {% client %}(\+\d{12,13})\:.*(listar|agendar|agendamentos|eventos|viagens|viagem|listar.viagens|agendar.evento|criar.agendamento|alterar|alterar.visita|remarcar|remarcar.visita|mudar.visita|mudar.agendamento|excluir|excluir.visita|desmarcar|desmarcar.visita|desmarca.|cancela.|cancela.?.visita).*{% endclient %}
         {% response %}{% call escolha_e_verificar_numero: %1 %2 %}{% endresponse %}
     {% endblock %}
 
@@ -52,13 +52,13 @@
 
     {% block %}
         {% client %}(\+\d{12,13})\:(.*){% endclient %}
-        {% prev %}Escolha.abaixo.o.número.da.visita.que.deseja.alterar[\s\S]+{% endprev %}
+        {% prev %}Escolha.abaixo.o.número.da.visita.que.deseja[\s\S]+{% endprev %}
         {% response %}{% call alterar_visita_dia: %2 %1 %}{% endresponse %}
     {% endblock %}
 
     {% block %}
         {% client %}(\+\d{12,13})\:(.*){% endclient %}
-        {% prev %}Para.qual.dia.você.gostaria.de.remarcar[\s\S]+{% endprev %}
+        {% prev %}Para.qual.dia.você.gostaria.de[\s\S]+{% endprev %}
         {% response %}{% call alterar_visita_pessoas: %2 %1 %}{% endresponse %}
     {% endblock %}
 
@@ -75,7 +75,7 @@
 
     {% block %}
         {% client %}(\+\d{12,13})\:(.*){% endclient %}
-        {% prev %}Qual.das.visitas.abaixo.você.gostaria.de.desmarcar[\s\S]+{% endprev %}
+        {% prev %}Qual.das.visitas.abaixo.você.gostaria.de[\s\S]+{% endprev %}
         {% response %}{% call excluir_visita: %2 %1 %}{% endresponse %}
     {% endblock %}
 
