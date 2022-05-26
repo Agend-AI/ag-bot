@@ -37,9 +37,9 @@ def create_days_week():
     global dias_semana_por_data
     for d in range(1, 7):
         today_week = (today_week + 1) % 7
+        dia = today + d
         if dia >= 31:
-            dia = (today + d) % 31
-            dia = dia if dia > 0 else 1
+            dia = dia % 31
             dia += 1
         dias_semana_por_data[dia] = (dias_semana_d[today_week], data_semana.format(today + d))
 
