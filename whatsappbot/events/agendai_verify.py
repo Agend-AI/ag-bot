@@ -20,6 +20,13 @@ opcoes_dict = {
     "cancelar": opcoes[3]
 }
 
+opcoes_pessoas = [
+    "1 - 1 a 5 pessoas",
+    "2 - 6 a 10 pessoas",
+    "3 - 11 a 15 pessoas",
+    "4 - 16 a 20 pessoas"
+]
+
 def opcoes_escolhas():
     return "\n".join(opcoes)
 
@@ -110,20 +117,22 @@ def alterar_visita_pessoas(session, query):
     escolha, numero = query.split()
     escolha = escolha.replace("_", " ").strip().lower()
     session.memory["dia"] = escolha
-    return "Para quantas pessoas?"
+    return "Para quantas pessoas? Escolha uma das opções abaixo:\n" + "\n".join(opcoes_pessoas)
 
 
 @register_call("alterar_visita_concluida")
 def alterar_visita_pessoas(session, query):
     escolha, numero = query.split()
     escolha = escolha.replace("_", " ").strip().lower()
+    escolha = opcoes_pessoas[int(escolha) - 1]
     dia = session.memory["dia"]
     dia = validar_dia(dia)
     dia = int(dia)
     d_inicial = getDayFormatted(dia)
     d_final = getDayFormatted(dia, 12)
     response = create_response(numero, dia, escolha, d_inicial, d_final)
-    url = API_EVENTS + "/" + pegar_id_visita(numero, int(session.memory["index_dia"]))
+    id = pegar_id_visita(numero, int(session.memory["index_dia"]))
+    url = API_EVENTS + "/" + id
     requests.put(url, json=response)
     return "Ótimo! Você remarcou sua visita para:\n" + ultima_visita_agendada_formatada(numero)
 
@@ -132,12 +141,12 @@ def alterar_visita_pessoas(session, query):
 def escolha_dia(session, query):
     escolha, numero = query.split()
     escolha = escolha.replace("_", " ").strip().lower()
-    print("Escolha dia: ", escolha)
+    print("Escolha dia:", escolha)
     dias = get_days_options_format().split("\n")
     for dia in dias:
         if escolha.lower().strip() in dia.lower():
             session.memory["dia"] = escolha
-            return "Quantas pessoas irão?"
+            return "Quantas pessoas irão? Escolha uma das opções abaixo:\n" + "\n".join(opcoes_pessoas)
     return "Desculpe mas não entendi, pode repetir?"
 
 
@@ -145,29 +154,28 @@ def escolha_dia(session, query):
 def quantidade_pessoas(session, query):
     escolha, numero = query.split()
     escolha = escolha.replace("_", " ").strip().lower()
-
+    escolha = opcoes_pessoas[int(escolha)-1]
     dia = session.memory["dia"]
     dia = validar_dia(dia)
     dia = int(dia)
     d_inicial = getDayFormatted(dia)
     d_final = getDayFormatted(dia, 12)
     response = create_response(numero, dia, escolha, d_inicial, d_final)
-
     requests.post(API_EVENTS, json=response)
-    return "Visita agendada com sucesso!"
+    return "Visita agendada com sucesso! Deseja fazer mais alguma coisa?\n" + opcoes_escolhas()
 
 
 def validar_dia(dia):
-    if GET_DATA.search(dia):
-        dia = GET_DATA.search(dia).group()
-        dia = get_day_from_data(dia)
-        return dia
-    elif GET_OPTION.search(dia):
+    if GET_OPTION.search(dia):
         dia = GET_OPTION.search(dia).group()
         dias = get_days_options_format().split("\n")
         dia = dias[int(dia) - 1]
         dayname = GET_DAYNAME.search(dia).group()
         dia = get_day_from_dayname(dayname)
+        return dia
+    elif GET_DATA.search(dia):
+        dia = GET_DATA.search(dia).group()
+        dia = get_day_from_data(dia)
         return dia
     elif GET_DAYNAME.search(dia):
         dia = GET_DAYNAME.search(dia).group()
@@ -194,7 +202,7 @@ def esquecer_usuario(session, query):
 def ultima_visita(session, query):
     escolha, numero = query.split()
     ultima = ultima_visita_agendada_formatada(numero)
-    return "A sua última visita agendada é:\n" + ultima
+    return "A sua última visita agendada é:\n" + ultima + "\n" + "Deseja fazer mais alguma coisa?\n" + opcoes_escolhas()
 
 
 @register_call("excluir_visita")
@@ -203,7 +211,7 @@ def excluir_visita(session, query):
     escolha = escolha.replace("_", " ").strip().lower()
     url = API_EVENTS + "/" + pegar_id_visita(numero, int(escolha))
     requests.delete(url)
-    return "Sua visita foi *desmarcada* (*cancelada*)!!"
+    return "Sua visita foi *desmarcada* (*cancelada*)!!\n" + "Deseja fazer mais alguma coisa?\n" + opcoes_escolhas()
 
 
 @register_call("excluir_todas_visitas")

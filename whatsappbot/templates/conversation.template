@@ -46,7 +46,7 @@
 
     {% block %}
         {% client %}(\+\d{12,13})\:(.*){% endclient %}
-        {% prev %}Quantas.pessoas(.*){% endprev %}
+        {% prev %}Quantas pessoas[\s\S]+{% endprev %}
         {% response %}{% call quantidade_pessoas: %2 %1 %}{% endresponse %}
     {% endblock %}
 

@@ -84,9 +84,10 @@ def ultima_visita_agendada_formatada(numero):
     return formatar_visita(visita, numero, index)
 
 
-def pegar_id_visita(numero, visita_alterar):
+
+def pegar_id_visita(numero, v_index):
     visitas = listar_visitas(numero)
-    visita_alterar = visitas[visita_alterar - 1]
+    visita_alterar = visitas[v_index-1]
     visita_id = visita_alterar["id"]
     return visita_id
 

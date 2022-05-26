@@ -37,7 +37,11 @@ def create_days_week():
     global dias_semana_por_data
     for d in range(1, 7):
         today_week = (today_week + 1) % 7
-        dias_semana_por_data[today + d] = (dias_semana_d[today_week], data_semana.format(today + d))
+        if dia >= 31:
+            dia = (today + d) % 31
+            dia = dia if dia > 0 else 1
+            dia += 1
+        dias_semana_por_data[dia] = (dias_semana_d[today_week], data_semana.format(today + d))
 
 
 def get_dayname_from_day(day):
@@ -85,7 +89,7 @@ def get_days_options_format():
     create_days_week()
     days = ""
     for i, d in enumerate(dias_semana_por_data.keys()):
-        days += f"{i+1} - {dias_semana_por_data[d][0].title()} ({dias_semana_por_data[d][1]})\n"
+        days += f"{dias_semana_por_data[d][0].title()} ({dias_semana_por_data[d][1]})\n"
     return days
 
 def convert_data_to_dd_mm_yyyy(data):
