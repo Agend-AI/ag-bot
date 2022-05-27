@@ -38,10 +38,10 @@ def create_days_week():
     for d in range(1, 7):
         today_week = (today_week + 1) % 7
         dia = today + d
-        if dia >= 31:
-            dia = dia % 31
+        if dia >= 32:
+            dia = dia % 32
             dia += 1
-        dias_semana_por_data[dia] = (dias_semana_d[today_week], data_semana.format(today + d))
+        dias_semana_por_data[dia] = (dias_semana_d[today_week], data_semana.format(dia))
 
 
 def get_dayname_from_day(day):
