@@ -30,6 +30,24 @@ opcoes_pessoas = [
 def opcoes_escolhas():
     return "\n".join(opcoes)
 
+def resposta_escolhas(escolha, numero):
+    if escolha in opcoes_dict["agendar"].lower() or escolha in ["agendar", "agendar evento", "criar agendamento"]:
+        return "Temos disponibilidades nos dias:\n" + get_days_options_format()
+    visitas = listar_visitas_formatas(numero)
+    if escolha in opcoes_dict["listar"].lower() or escolha in ["listar", "agendamentos", "eventos", "listar viagens"]:
+        if visitas == "":
+            return "Você não possui visitas! Deseja fazer mais alguma coisa?\n" + opcoes_escolhas()
+        return visitas
+    if escolha in opcoes_dict["alterar"].lower() or escolha in ["remarcar", "alterar data", "mudar visita"]:
+        if visitas == "":
+            return "Você não possui visitas! Deseja fazer mais alguma coisa?\n" + opcoes_escolhas()
+        return "Escolha abaixo o número da visita que deseja *alterar*:\n" + visitas
+    if escolha in opcoes_dict["cancelar"].lower() or escolha in ["cancelar", "excluir", "desmarcar", "desmarca", "exclui", "cancela"]:
+        if visitas == "":
+            return "Você não possui visitas! Deseja fazer mais alguma coisa?\n" + opcoes_escolhas()
+        return "Qual das visitas abaixo você gostaria de *desmarcar* (*Cancelar*)? Diga o número da visita:\n" + visitas
+    return "Não entendi, pode repetir?"
+
 
 @register_call("escolha_e_verificar_numero")
 def escolha_e_verificar_numero(session, query: str):
@@ -39,18 +57,7 @@ def escolha_e_verificar_numero(session, query: str):
         return "Olá, seja bem-vindo a Casa do Celso! Vi que você não possui cadastro conosco, gostaria de se cadastrar?\n" \
                "1 - Sim\n" \
                "2 - Não"
-    if escolha in opcoes_dict["listar"].lower() or escolha in ["listar", "agendamentos", "eventos",
-                                                                      "listar viagens"]:
-        return listar_visitas_formatas(numero)
-    if escolha in opcoes_dict["agendar"].lower() or escolha in ["agendar", "agendar evento", "criar agendamento"]:
-        return "Temos disponibilidades nos dias:\n" + get_days_options_format()
-
-    if escolha in opcoes_dict["alterar"].lower() or escolha in ["remarcar", "alterar data", "mudar visita"]:
-        return "Escolha abaixo o número da visita que deseja *alterar*:\n" + listar_visitas_formatas(numero)
-
-    if escolha in opcoes_dict["cancelar"].lower() or escolha in ["cancelar", "excluir", "desmarcar", "desmarca", "exclui", "cancela"]:
-        return "Qual das visitas abaixo você gostaria de *desmarcar* (*Cancelar*)? Diga o número da visita:\n" + listar_visitas_formatas(
-            numero)
+    return resposta_escolhas(escolha=escolha, numero=numero)
 
 @register_call("verificar_numero")
 def verificar_numero(session, query: str):
@@ -71,37 +78,14 @@ def cadastrar_numero(session, query):
     if "escolha_antecipada" not in session.memory:
         return "Sejá bem-vindo :) O que você gostaria de fazer?\n" \
                + opcoes_escolhas()
-
-    if session.memory["escolha_antecipada"] in opcoes_dict["listar"].lower() or session.memory[
-        "escolha_antecipada"] in ["listar", "agendamentos", "eventos", "listar viagens"]:
-        return listar_visitas_formatas(numero)
-    if session.memory["escolha_antecipada"] in opcoes_dict["agendar"].lower() or session.memory["escolha_antecipada"] in [
-        "agendar", "agendar evento", "criar agendamento"]:
-        return "Temos disponibilidades nos dias:\n" + get_days_options_format()
-    if session.memory["escolha_antecipada"] in opcoes_dict["alterar"].lower() or session.memory["escolha_antecipada"] in ["remarcar", "alterar data", "mudar visita"]:
-        return "Escolha abaixo o número da visita que deseja alterar:\n" + listar_visitas_formatas(numero)
-    if session.memory["escolha_antecipada"] in opcoes_dict["cancelar"].lower() or session.memory["escolha_antecipada"] in ["cancelar", "excluir", "desmarcar", "desmarca", "exclui", "cancela"]:
-        return "Qual das visitas abaixo você gostaria de *desmarcar* (*Cancelar*)? Diga o número da visita:\n" + listar_visitas_formatas(
-            numero)
-
+    return resposta_escolhas(escolha=session.memory["escolha_antecipada"], numero=numero)
 
 @register_call("escolhas")
 def escolhas(session, query):
     escolha, numero = query.split()
     escolha = escolha.replace("_", " ").strip().lower()
     print("Escolha opção: ", escolha)
-    if escolha in opcoes_dict["listar"].lower() or escolha in ["listar", "agendamentos", "eventos",
-                                                                      "listar viagens"]:
-        return listar_visitas_formatas(numero)
-    if escolha in opcoes_dict["agendar"].lower() or escolha in ["agendar", "agendar evento", "criar agendamento"]:
-        return "Temos disponibilidades nos dias:\n" + get_days_options_format()
-    if escolha in opcoes_dict["alterar"].lower() or escolha in ["remarcar", "alterar data", "mudar visita"]:
-        return "Escolha abaixo o número da visita que deseja *alterar*:\n" + listar_visitas_formatas(numero)
-    if escolha in opcoes_dict["cancelar"].lower() or escolha in ["cancelar", "excluir", "desmarcar", "desmarca", "exclui", "cancela"]:
-        return "Qual das visitas abaixo você gostaria de *desmarcar* (*Cancelar*)? Diga o número da visita:\n" + listar_visitas_formatas(
-            numero)
-
-    return "Não entendi, pode repetir?"
+    return resposta_escolhas(escolha=escolha, numero=numero)
 
 
 @register_call("alterar_visita_dia")
